@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/moov-io/iso8583/encoding"
-	"github.com/moov-io/iso8583/utils"
+	"github.com/fresanov/iso8583/encoding"
+	"github.com/fresanov/iso8583/utils"
 )
 
 var _ Field = (*Binary)(nil)

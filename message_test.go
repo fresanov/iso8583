@@ -7,11 +7,11 @@ import (
 	"testing"
 	"time"
 
-	"github.com/moov-io/iso8583/encoding"
-	"github.com/moov-io/iso8583/field"
-	"github.com/moov-io/iso8583/padding"
-	"github.com/moov-io/iso8583/prefix"
-	"github.com/moov-io/iso8583/sort"
+	"github.com/fresanov/iso8583/encoding"
+	"github.com/fresanov/iso8583/field"
+	"github.com/fresanov/iso8583/padding"
+	"github.com/fresanov/iso8583/prefix"
+	"github.com/fresanov/iso8583/sort"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -555,7 +555,7 @@ func TestPackUnpack(t *testing.T) {
 
 	// this test should check that BCD fields are packed and
 	// unpacked correctly it's a confirmation that issue
-	// https://github.com/moov-io/iso8583/issues/220 is fixed
+	// https://github.com/fresanov/iso8583/issues/220 is fixed
 	t.Run("Pack and Unpack BCD fields", func(t *testing.T) {
 		var spec = &MessageSpec{
 			Fields: map[int]field.Field{

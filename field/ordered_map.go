@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/moov-io/iso8583/utils"
+	"github.com/fresanov/iso8583/utils"
 )
 
 // Custom type to sort keys in resulting JSON

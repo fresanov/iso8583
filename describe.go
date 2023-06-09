@@ -9,7 +9,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/moov-io/iso8583/field"
+	"github.com/fresanov/iso8583/field"
 )
 
 var defaultSpecName = "ISO 8583"

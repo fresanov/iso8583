@@ -4,9 +4,9 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/moov-io/iso8583/encoding"
-	"github.com/moov-io/iso8583/prefix"
-	"github.com/moov-io/iso8583/utils"
+	"github.com/fresanov/iso8583/encoding"
+	"github.com/fresanov/iso8583/prefix"
+	"github.com/fresanov/iso8583/utils"
 	"github.com/stretchr/testify/require"
 )
 

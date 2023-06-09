@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"math/bits"
 
-	"github.com/moov-io/iso8583/utils"
+	"github.com/fresanov/iso8583/utils"
 )
 
 var (

@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/moov-io/iso8583/utils"
+	"github.com/fresanov/iso8583/utils"
 )
 
 var _ Field = (*Hex)(nil)

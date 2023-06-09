@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/moov-io/iso8583/encoding"
-	"github.com/moov-io/iso8583/prefix"
+	"github.com/fresanov/iso8583/encoding"
+	"github.com/fresanov/iso8583/prefix"
 	"github.com/stretchr/testify/require"
 )
 

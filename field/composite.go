@@ -9,12 +9,12 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/moov-io/iso8583/encoding"
-	"github.com/moov-io/iso8583/padding"
-	"github.com/moov-io/iso8583/prefix"
-	"github.com/moov-io/iso8583/sort"
+	"github.com/fresanov/iso8583/encoding"
+	"github.com/fresanov/iso8583/padding"
+	"github.com/fresanov/iso8583/prefix"
+	"github.com/fresanov/iso8583/sort"
 
-	"github.com/moov-io/iso8583/utils"
+	"github.com/fresanov/iso8583/utils"
 )
 
 var _ Field = (*Composite)(nil)

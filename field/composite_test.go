@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/moov-io/iso8583/encoding"
-	"github.com/moov-io/iso8583/padding"
-	"github.com/moov-io/iso8583/prefix"
-	"github.com/moov-io/iso8583/sort"
+	"github.com/fresanov/iso8583/encoding"
+	"github.com/fresanov/iso8583/padding"
+	"github.com/fresanov/iso8583/prefix"
+	"github.com/fresanov/iso8583/sort"
 	"github.com/stretchr/testify/require"
 )
 

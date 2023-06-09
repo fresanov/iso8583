@@ -6,12 +6,12 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/moov-io/iso8583"
-	"github.com/moov-io/iso8583/encoding"
-	"github.com/moov-io/iso8583/field"
-	"github.com/moov-io/iso8583/padding"
-	"github.com/moov-io/iso8583/prefix"
-	"github.com/moov-io/iso8583/sort"
+	"github.com/fresanov/iso8583"
+	"github.com/fresanov/iso8583/encoding"
+	"github.com/fresanov/iso8583/field"
+	"github.com/fresanov/iso8583/padding"
+	"github.com/fresanov/iso8583/prefix"
+	"github.com/fresanov/iso8583/sort"
 )
 
 func TestBuilder(t *testing.T) {
