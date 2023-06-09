@@ -51,10 +51,10 @@ func (e *bcdEncoder) Decode(src []byte, length int) ([]byte, int, error) {
 
 	dec := bcd.NewDecoder(bcd.Standard)
 	dst := make([]byte, decodedLen)
-	fmt.Printf("calling decode with arg: %x\n", src[:read]) // fresanov
+	//fmt.Printf("calling decode with arg: %x\n", src[:read]) // fresanov
 	_, err := dec.Decode(dst, src[:read])
 	if err != nil {
-		fmt.Printf("bcd errore: %v\n", err) // fresanov
+		//fmt.Printf("bcd errore: %v\n", err) // fresanov
 		return nil, 0, utils.NewSafeError(err, "failed to perform BCD decoding")
 	}
 

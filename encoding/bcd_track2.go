@@ -36,11 +36,11 @@ func containsSeparator(b byte) (bool, int) {
 	rightNibbleSeparator := byte(0b00001101) // D separator contained in right nibble
 
 	if res := b & leftNibbleSeparator; res == leftNibbleSeparator {
-		fmt.Printf("found separator in left nibble, byte: %x\n", b)
+		//fmt.Printf("found separator in left nibble, byte: %x\n", b) // fresanov
 		return true, 0
 	}
 	if res := b & rightNibbleSeparator; res == rightNibbleSeparator {
-		fmt.Printf("found separator in right nibble, byte: %x\n", b)
+		//fmt.Printf("found separator in right nibble, byte: %x\n", b) // fresanov
 		return true, 1
 	}
 
@@ -65,11 +65,11 @@ func zeroOutSeparator(b byte, nibble int) byte {
 
 // sometimes last nibble contains bytes in non-BCD range (F for example) - clear them out
 func zeroOutLastNibble(b byte) byte {
-	fmt.Printf("zeroing out last byte %x\n", b)
+	//fmt.Printf("zeroing out last byte %x\n", b) // fresanov
 	var result byte
 	b = b >> 4
 	result = b << 4
-	fmt.Printf("zeroing out result %x\n", result)
+	//fmt.Printf("zeroing out result %x\n", result) // fresanov
 	return result
 }
 
@@ -87,27 +87,27 @@ func (e *bcdTrack2Encoder) Decode(src []byte, length int) ([]byte, int, error) {
 		found, nibble := containsSeparator(v)
 		if found {
 			indexOfSeparator = i
-			fmt.Printf("index of separator %d\n", indexOfSeparator)
+			// fmt.Printf("index of separator %d\n", indexOfSeparator) // fresanov
 			separatorNibble = nibble
 			zeroedOutSeparatorByte = zeroOutSeparator(v, nibble)
 			break
 		}
 	}
-	fmt.Printf("separator nibble: %d\n", separatorNibble) // fresanov
+	//fmt.Printf("separator nibble: %d\n", separatorNibble) // fresanov
 
 	// extracting parts of slice left of separator and right of separator
 	// separator byte is not included in either parts
 
 	leftPart := make([]byte, indexOfSeparator)
 	copy(leftPart, src[:indexOfSeparator])
-	fmt.Printf("left part %x\n", leftPart)
+	//fmt.Printf("left part %x\n", leftPart) // fresanov
 
 	rightPart := make([]byte, (length/2)-indexOfSeparator-1)
 	copy(rightPart, src[indexOfSeparator+1:(length/2)]) // exclude last byte -> we zero out the last nibble in it just in case
-	fmt.Printf("right part %x\n", rightPart)
+	//fmt.Printf("right part %x\n", rightPart) // fresanov
 
 	lastByte := src[(length / 2):]
-	fmt.Printf("last byte slice: %x\n", lastByte)
+	//fmt.Printf("last byte slice: %x\n", lastByte) // fresanov
 	zeroedOutLastByte := zeroOutLastNibble(lastByte[0])
 	rightPart = append(rightPart, zeroedOutLastByte)
 
@@ -133,17 +133,17 @@ func (e *bcdTrack2Encoder) Decode(src []byte, length int) ([]byte, int, error) {
 
 	dec := bcd.NewDecoder(bcd.Standard)
 	dst := make([]byte, decodedLen)
-	fmt.Printf("calling decode with arg: %x\n", corrected[:read]) // fresanov
+	//fmt.Printf("calling decode with arg: %x\n", corrected[:read]) // fresanov
 	_, err := dec.Decode(dst, corrected[:read])
 	if err != nil {
-		fmt.Printf("bcd errore: %v\n", err) // fresanov
+		//fmt.Printf("bcd errore: %v\n", err) // fresanov
 		return nil, 0, utils.NewSafeError(err, "failed to perform BCD decoding")
 	}
-	fmt.Printf("decoded track2: %x\n", dst)
-	fmt.Printf("decoded track2 string: %s\n", dst)
+	//fmt.Printf("decoded track2: %x\n", dst) // fresanov
+	//fmt.Printf("decoded track2 string: %s\n", dst) // fresanov
 
 	trackString := string(dst)
-	fmt.Printf("trackString converted: %s\n", trackString)
+	//fmt.Printf("trackString converted: %s\n", trackString) // fresanov
 	var separatorPosition int
 	if separatorNibble == 0 {
 		separatorPosition = (len(leftPart) * 2)
@@ -152,7 +152,7 @@ func (e *bcdTrack2Encoder) Decode(src []byte, length int) ([]byte, int, error) {
 		separatorPosition = (len(leftPart) * 2) + 1
 	}
 	trackString = replaceAtIndex(trackString, '=', separatorPosition)
-	fmt.Printf("trackString replaced: %s\n", trackString)
+	//fmt.Printf("trackString replaced: %s\n", trackString) // fresanov
 
 	result := []byte(trackString)
 

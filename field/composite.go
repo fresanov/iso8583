@@ -550,7 +550,7 @@ const (
 
 func (f *Composite) unpackSubfieldsByTag(data []byte) (int, error) {
 	offset := 0
-	fmt.Printf("unpacking composite: %x\n", data) // fresanov
+	//fmt.Printf("unpacking composite: %x\n", data) // fresanov
 	for offset < len(data) {
 		tagBytes, read, err := f.spec.Tag.Enc.Decode(data[offset:], f.spec.Tag.Length)
 		if err != nil {
@@ -562,7 +562,7 @@ func (f *Composite) unpackSubfieldsByTag(data []byte) (int, error) {
 			tagBytes = f.spec.Tag.Pad.Unpad(tagBytes)
 		}
 		tag := string(tagBytes)
-		fmt.Printf("unpacking composite, got tag: %x\n", tag) // fresanov
+		//fmt.Printf("unpacking composite, got tag: %x\n", tag) // fresanov
 		if _, ok := f.spec.Subfields[tag]; !ok {
 			if f.skipUnknownTLVTags() {
 				// to obtain the length of the unknown tag and add it to the offset we need to decode its length

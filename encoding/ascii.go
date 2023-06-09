@@ -39,8 +39,8 @@ func (e asciiEncoder) Decode(data []byte, length int) ([]byte, int, error) {
 	var out []byte
 	for _, r := range data {
 		if r > 127 {
-			fmt.Printf("data: %v\n", data) // fresanov
-			fmt.Printf("r: %d\n", r)       // fresanov
+			//fmt.Printf("data: %v\n", data) // fresanov
+			//fmt.Printf("r: %d\n", r)       // fresanov
 			return nil, 0, utils.NewSafeError(fmt.Errorf("invalid ASCII char: '%s'", string(r)), "failed to perform ASCII decoding")
 		}
 		out = append(out, r)

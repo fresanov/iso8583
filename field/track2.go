@@ -91,9 +91,9 @@ func (f *Track2) Unpack(data []byte) (int, error) {
 		return 0, fmt.Errorf("failed to decode length: %w", err)
 	}
 
-	fmt.Printf("track2 before decoding: %x\n", data) // fresanov
-	fmt.Printf("track2 pref bytes: %d\n", prefBytes) // fresanov
-	fmt.Printf("track2 data len: %d\n", dataLen)     // fresanov
+	//fmt.Printf("track2 before decoding: %x\n", data) // fresanov
+	//fmt.Printf("track2 pref bytes: %d\n", prefBytes) // fresanov
+	//fmt.Printf("track2 data len: %d\n", dataLen)     // fresanov
 	raw, read, err := f.spec.Enc.Decode(data[prefBytes:], dataLen)
 	if err != nil {
 		return 0, fmt.Errorf("failed to decode content: %w", err)
@@ -157,8 +157,8 @@ func (f *Track2) Marshal(data interface{}) error {
 }
 
 func (f *Track2) unpack(raw []byte) error {
-	fmt.Printf("track2 raw: %v\n", raw) // fresanov
-	fmt.Printf("track2 str: %s\n", raw) // fresanov
+	//fmt.Printf("track2 raw: %v\n", raw) // fresanov
+	//fmt.Printf("track2 str: %s\n", raw) // fresanov
 	if raw == nil || !track2Regex.Match(raw) {
 		return errors.New("invalid track data")
 	}
