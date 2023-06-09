@@ -92,6 +92,7 @@ func (f *String) Pack() ([]byte, error) {
 }
 
 func (f *String) Unpack(data []byte) (int, error) {
+	fmt.Printf("decoding length for data: %x\n", data) // fresanov
 	dataLen, prefBytes, err := f.spec.Pref.DecodeLength(f.spec.Length, data)
 	if err != nil {
 		return 0, fmt.Errorf("failed to decode length: %w", err)

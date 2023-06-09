@@ -185,6 +185,9 @@ func (m *Message) Unpack(src []byte) error {
 	}
 
 	off += read
+	//fmt.Printf("off: %d\n", off) // fresanov
+
+	//fmt.Printf("sors: %v\n", src) // fresanov
 
 	for i := 2; i <= m.Bitmap().Len(); i++ {
 		if m.Bitmap().IsSet(i) {
@@ -192,7 +195,7 @@ func (m *Message) Unpack(src []byte) error {
 			if !ok {
 				return fmt.Errorf("failed to unpack field %d: no specification found", i)
 			}
-
+			//fmt.Printf("loop i %d off %d\n", i, off) // fresanov
 			read, err = fl.Unpack(src[off:])
 			if err != nil {
 				return fmt.Errorf("failed to unpack field %d (%s): %w", i, fl.Spec().Description, err)

@@ -17,6 +17,7 @@ type Numeric struct {
 	value int
 	spec  *Spec
 	data  *Numeric
+	bytes []byte
 }
 
 func NewNumeric(spec *Spec) *Numeric {
@@ -48,11 +49,15 @@ func (f *Numeric) SetBytes(b []byte) error {
 	} else {
 		// otherwise parse the raw to an int
 		val, err := strconv.Atoi(string(b))
+		//fmt.Printf("entered shit else, val: %d\n", val) // fresanov
+		//fmt.Printf("shit else, bytes %v\n", b)          // fresanov
 		if err != nil {
 			return utils.NewSafeError(err, "failed to convert into number")
 		}
 		f.value = val
 	}
+
+	f.bytes = b
 
 	if f.data != nil {
 		*(f.data) = *f
@@ -71,7 +76,8 @@ func (f *Numeric) String() (string, error) {
 	if f == nil {
 		return "", nil
 	}
-	return strconv.Itoa(f.value), nil
+	//return strconv.Itoa(f.value), nil
+	return string(f.bytes), nil
 }
 
 func (f *Numeric) Value() int {
@@ -86,7 +92,18 @@ func (f *Numeric) SetValue(v int) {
 }
 
 func (f *Numeric) Pack() ([]byte, error) {
-	data := []byte(strconv.Itoa(f.value))
+	//data = []byte(strconv.Itoa(f.value)) // original line
+	/* fresanov begin */
+	/* fmt.Printf("packing: %v\n", f.value)
+	var data []byte
+	if f.value == 0 {
+		data = make([]byte, f.spec.Length)
+	} else {
+		data = []byte(strconv.Itoa(f.value))
+	}
+	fmt.Printf("packed: %v\n", data) */
+	/* fresanov end */
+	data := f.bytes
 
 	if f.spec.Pad != nil {
 		data = f.spec.Pad.Pad(data, f.spec.Length)
@@ -112,6 +129,9 @@ func (f *Numeric) Unpack(data []byte) (int, error) {
 		return 0, fmt.Errorf("failed to decode length: %w", err)
 	}
 
+	//fmt.Printf("prefbytes: %d\n", prefBytes) // fresanov
+	//fmt.Printf("data: %v\n", data)           // fresanov
+	//fmt.Printf("dataLen: %d\n", dataLen)     // fresanov
 	raw, read, err := f.spec.Enc.Decode(data[prefBytes:], dataLen)
 	if err != nil {
 		return 0, fmt.Errorf("failed to decode content: %w", err)

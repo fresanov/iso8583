@@ -33,6 +33,12 @@ func StringsByInt(x []string) {
 	})
 }
 
+func StringsAlphabetically(x []string) {
+	sort.Slice(x, func(i, j int) bool {
+		return x[i] < x[j]
+	})
+}
+
 // StringsByHex sorts a slice of strings according to their big-endian Hex value.
 // This function panics in the event that an element in the slice cannot be
 // converted to a Hex slice. Each string representation of a hex value must be

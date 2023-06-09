@@ -39,6 +39,12 @@ func TestBCD(t *testing.T) {
 		require.Equal(t, []byte("2143"), res)
 		require.Equal(t, 2, read)
 
+		res, read, err = BCD.Decode([]byte{0x00, 0x00, 0x00}, 6)
+
+		require.NoError(t, err)
+		require.Equal(t, []byte("000000"), res)
+		require.Equal(t, 3, read)
+
 		_, _, err = BCD.Decode([]byte{0x21, 0x43}, 6)
 		require.Error(t, err)
 		require.EqualError(t, err, "not enough data to decode. expected len 3, got 2")
