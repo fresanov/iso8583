@@ -15,18 +15,95 @@ var (
 type bcdTrack2Encoder struct{}
 
 func (e *bcdTrack2Encoder) Encode(src []byte) ([]byte, error) {
+	var separatorIndex int
+	for i, v := range src {
+		if v == 0x44 { // 'D' separator
+			separatorIndex = i
+			break
+		}
+	}
+	lengthPayload := len(src)
+	var encoded []byte
+	if lengthPayload%2 == 0 {
+		encoded = make([]byte, 0, lengthPayload/2)
+	} else {
+		encoded = make([]byte, 0, lengthPayload/2+1)
+	}
+	enc := bcd.NewEncoder(bcd.Standard)
+	/* length := make([]byte, 1)
+	lengthEncoded := make([]byte, 1)
+	length = append(length, byte(lengthPayload))
+	enc.Encode(lengthEncoded, length) */
+
+	var panBytes []byte
+	if separatorIndex%2 == 0 { // separator on even index means that PAN is also even
+		panBytes = make([]byte, (separatorIndex)/2)
+		enc.Encode(panBytes, src[:separatorIndex])
+	} else {
+		panBytes = make([]byte, (separatorIndex+1)/2)
+		origPanBytes := src[:separatorIndex+1]   // include separator deliberately, we will zero it out
+		origPanBytes[len(origPanBytes)-1] = 0x30 // zero out separator
+		enc.Encode(panBytes, origPanBytes)
+		addSeparatorEnd(panBytes)
+	}
+	var restOfTrack2 []byte
+	lengthOfRest := len(src) - (separatorIndex + 1)
+	if separatorIndex%2 == 0 { // separator on even index means PAN was encoded without separator on last nibble -> separator goes on first nibble of rest of data
+		if lengthOfRest%2 == 0 {
+			restOfTrack2 = make([]byte, (lengthOfRest/2) + 1)
+			origRest := src[separatorIndex:] // include separator deliberately, we will zero it out
+			origRest[0] = 0x30  // zero out separator
+			enc.Encode(restOfTrack2, origRest)
+			addSeparatorBegining(restOfTrack2)
+			addEndDelimiter(restOfTrack2)
+		} else {
+			restOfTrack2 = make([]byte, (lengthOfRest+1)/2)
+		}
+	}
+
+	encoded = append(encoded, panBytes...)
+	encoded = append(encoded, restOfTrack2...)
+	return encoded, nil
+
+	
+
+/* 	fmt.Printf("encoding bytes: %x\n", src)
 	if len(src)%2 != 0 {
+		fmt.Printf("APPENDING, len: %d\n", len(src))
 		src = append([]byte("0"), src...)
 	}
 
-	enc := bcd.NewEncoder(bcd.Standard)
 	dst := make([]byte, bcd.EncodedLen(len(src)))
 	n, err := enc.Encode(dst, src)
 	if err != nil {
+		fmt.Printf("GOT HERE: %v\n", err)
 		return nil, utils.NewSafeError(err, "failed to perform BCD encoding")
 	}
 
-	return dst[:n], nil
+	return dst[:n], nil */
+}
+
+func addSeparatorEnd(dst []byte) {
+	rightNibbleSeparator := byte(0b00001101) // D separator contained in right nibble
+	lastByte := dst[len(dst)-1]
+	// we know that the last nibble (where separator should be) is zeroed-out. bitwise OR operation will retain the left nibble as-is and add 'D' separator in right nibble
+	lastByte = lastByte | rightNibbleSeparator
+	dst[len(dst)-1] = lastByte
+}
+
+func addSeparatorBegining(dst []byte) {
+	leftNibbleSeparator := byte(0b11010000) // D separator contained in left nibble
+	firstByte := dst[0]
+	firstByte = firstByte | leftNibbleSeparator
+	dst[0] = firstByte
+}
+
+func addEndDelimiter(dst []byte) {
+	rightNibbleDelimiter := byte(0b00001111) // F delimiter contained in right nibble
+	lastByte := dst[len(dst)-1]
+	// we know that the last nibble (where separator should be) is zeroed-out. bitwise OR operation will retain the left nibble as-is and add 'D' separator in right nibble
+	lastByte = lastByte | rightNibbleDelimiter
+	dst[len(dst)-1] = lastByte
 }
 
 // Returns [true, 0] if separator is in left nibble, [true 1] if separator is in right nibble
