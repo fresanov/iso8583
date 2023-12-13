@@ -84,16 +84,17 @@ func (e *bcdTrack2Encoder) Encode(src []byte) ([]byte, error) {
 }
 
 func addSeparatorEnd(dst []byte) {
-	rightNibbleSeparator := byte(0b00001101) // D separator contained in right nibble
+	rightNibbleSeparator := byte(0b00001101) // 'D' separator contained in right nibble
 	lastByte := dst[len(dst)-1]
-	// we know that the last nibble (where separator should be) is zeroed-out. bitwise OR operation will retain the left nibble as-is and add 'D' separator in right nibble
+	// we know that the last(right) nibble (where separator should be) is zeroed-out. bitwise OR operation will retain the left nibble as-is and add 'D' separator in right nibble
 	lastByte = lastByte | rightNibbleSeparator
 	dst[len(dst)-1] = lastByte
 }
 
 func addSeparatorBegining(dst []byte) {
-	leftNibbleSeparator := byte(0b11010000) // D separator contained in left nibble
+	leftNibbleSeparator := byte(0b11010000) // 'D' separator contained in left nibble
 	firstByte := dst[0]
+	// we know that the first(left) nibble (where separator should be) is zeroed-out. bitwise OR operation will retain the right nibble as-is and add 'D' separator in left nibble
 	firstByte = firstByte | leftNibbleSeparator
 	dst[0] = firstByte
 }
@@ -101,7 +102,7 @@ func addSeparatorBegining(dst []byte) {
 func addEndDelimiter(dst []byte) {
 	rightNibbleDelimiter := byte(0b00001111) // F delimiter contained in right nibble
 	lastByte := dst[len(dst)-1]
-	// we know that the last nibble (where separator should be) is zeroed-out. bitwise OR operation will retain the left nibble as-is and add 'D' separator in right nibble
+	// bitwise OR operation will retain the left nibble as-is and add 'F' delimiter in right nibble
 	lastByte = lastByte | rightNibbleDelimiter
 	dst[len(dst)-1] = lastByte
 }
