@@ -1,6 +1,7 @@
 package encoding
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/fresanov/iso8583/utils"
@@ -16,11 +17,16 @@ type bcdTrack2Encoder struct{}
 
 func (e *bcdTrack2Encoder) Encode(src []byte) ([]byte, error) {
 	var separatorIndex int
+	var separatorFound bool = false
 	for i, v := range src {
 		if v == 0x44 { // 'D' separator
 			separatorIndex = i
+			separatorFound = true
 			break
 		}
+	}
+	if !separatorFound {
+		return nil, errors.New("track2 separator missing")
 	}
 	lengthPayload := len(src)
 	var encoded []byte
@@ -30,10 +36,6 @@ func (e *bcdTrack2Encoder) Encode(src []byte) ([]byte, error) {
 		encoded = make([]byte, 0, lengthPayload/2+1)
 	}
 	enc := bcd.NewEncoder(bcd.Standard)
-	/* length := make([]byte, 1)
-	lengthEncoded := make([]byte, 1)
-	length = append(length, byte(lengthPayload))
-	enc.Encode(lengthEncoded, length) */
 
 	var panBytes []byte
 	if separatorIndex%2 == 0 { // separator on even index means that PAN is also even
@@ -50,37 +52,35 @@ func (e *bcdTrack2Encoder) Encode(src []byte) ([]byte, error) {
 	lengthOfRest := len(src) - (separatorIndex + 1)
 	if separatorIndex%2 == 0 { // separator on even index means PAN was encoded without separator on last nibble -> separator goes on first nibble of rest of data
 		if lengthOfRest%2 == 0 {
-			restOfTrack2 = make([]byte, (lengthOfRest/2) + 1)
+			restOfTrack2 = make([]byte, (lengthOfRest/2)+1)
 			origRest := src[separatorIndex:] // include separator deliberately, we will zero it out
-			origRest[0] = 0x30  // zero out separator
+			origRest[0] = 0x30               // zero out separator
 			enc.Encode(restOfTrack2, origRest)
 			addSeparatorBegining(restOfTrack2)
 			addEndDelimiter(restOfTrack2)
 		} else {
 			restOfTrack2 = make([]byte, (lengthOfRest+1)/2)
+			origRest := src[separatorIndex:] // include separator deliberately, we will zero it out
+			origRest[0] = 0x30               // zero out separator
+			enc.Encode(restOfTrack2, origRest)
+			addSeparatorBegining(restOfTrack2)
+		}
+	} else { // separator NOT on even index means PAN was encoded with separator on last nibble -> separator not included in rest of data
+		if lengthOfRest%2 == 0 {
+			restOfTrack2 = make([]byte, (lengthOfRest / 2))
+			origRest := src[separatorIndex+1:] // don't include separator
+			enc.Encode(restOfTrack2, origRest)
+		} else {
+			restOfTrack2 = make([]byte, (lengthOfRest/2)+1)
+			origRest := src[separatorIndex+1:] // don't include separator
+			enc.Encode(restOfTrack2, origRest)
+			addEndDelimiter(restOfTrack2)
 		}
 	}
 
 	encoded = append(encoded, panBytes...)
 	encoded = append(encoded, restOfTrack2...)
 	return encoded, nil
-
-	
-
-/* 	fmt.Printf("encoding bytes: %x\n", src)
-	if len(src)%2 != 0 {
-		fmt.Printf("APPENDING, len: %d\n", len(src))
-		src = append([]byte("0"), src...)
-	}
-
-	dst := make([]byte, bcd.EncodedLen(len(src)))
-	n, err := enc.Encode(dst, src)
-	if err != nil {
-		fmt.Printf("GOT HERE: %v\n", err)
-		return nil, utils.NewSafeError(err, "failed to perform BCD encoding")
-	}
-
-	return dst[:n], nil */
 }
 
 func addSeparatorEnd(dst []byte) {
