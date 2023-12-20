@@ -23,6 +23,9 @@ type TagSpec struct {
 	// Enc defines the encoder used to marshal and unmarshal
 	// the tag.
 	Enc encoding.Encoder
+	// Pref defines the prefixer of the field used to encode and decode the
+	// length of the field.
+	Pref prefix.Prefixer
 	// Pad sets the padding direction and type of the tag.
 	// This is most commonly used for composite field types
 	// whose tags hold leading 0s e.g. '003' would be unpadded to '3'.
